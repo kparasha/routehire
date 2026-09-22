@@ -11,7 +11,7 @@ import {
   searchJobs,
 } from "./tools";
 
-const server = new Server({ name: "wastehire", version: "0.2.0" }, { capabilities: { tools: {} } });
+const server = new Server({ name: "routehire", version: "0.2.0" }, { capabilities: { tools: {} } });
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [

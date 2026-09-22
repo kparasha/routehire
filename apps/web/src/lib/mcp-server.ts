@@ -23,7 +23,8 @@ function text(data: unknown) {
 /** Stateless remote MCP server for Claude custom connectors / agent UIs. */
 export function createWasteHireMcpServer() {
   const server = new McpServer({
-    name: "WasteHire",
+    // Claude custom connector name stays RouteHire until supply-side rename
+    name: "RouteHire",
     version: "0.3.0",
   });
 

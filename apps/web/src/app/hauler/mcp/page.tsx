@@ -23,7 +23,7 @@ export default function McpConfigPage() {
   }, []);
 
   const host = resolveHost(pageOrigin || FALLBACK_PROD);
-  const connectorName = "WasteHire";
+  const connectorName = "RouteHire";
   const connectorUrl = `${host}/api/mcp`;
 
   async function copy(kind: "url" | "name", value: string) {
@@ -35,7 +35,7 @@ export default function McpConfigPage() {
   return (
     <main className="container">
       <p className="hero-mark">Hiring · Connector</p>
-      <h1>Add WasteHire in Claude</h1>
+      <h1>Add RouteHire in Claude</h1>
       <p className="lead">
         Custom connector (remote MCP). Paste the name and URL in Claude → Customize → Connectors → Add
         custom connector. Auth is on the roadmap — open for demo.
@@ -84,7 +84,7 @@ export default function McpConfigPage() {
             <span className="tick" aria-hidden>
               ✓
             </span>
-            “List WasteHire shortlist — home daily near 30301”
+            “List RouteHire shortlist — home daily near 30301”
           </li>
           <li>
             <span className="tick" aria-hidden>
@@ -96,13 +96,13 @@ export default function McpConfigPage() {
             <span className="tick" aria-hidden>
               ✓
             </span>
-            “What are WasteHire’s flat placement fees?” / “Show the fee schedule”
+            “What are RouteHire’s flat placement fees?” / “Show the fee schedule”
           </li>
           <li>
             <span className="tick" aria-hidden>
               ✓
             </span>
-            “Quote the flat fee for capital-waste-cdl-local”
+            “Quote the flat fee for capital-3535750”
           </li>
         </ul>
       </div>

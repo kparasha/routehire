@@ -66,8 +66,8 @@ test("hauler hire shows contingent fee", async ({ page }) => {
 
 test("MCP page shows Claude custom connector name and remote URL", async ({ page }) => {
   await page.goto("/hauler/mcp");
-  await expect(page.getByRole("heading", { name: /Add WasteHire in Claude/i })).toBeVisible();
-  await expect(page.getByTestId("mcp-name")).toHaveText("WasteHire");
+  await expect(page.getByRole("heading", { name: /Add RouteHire in Claude/i })).toBeVisible();
+  await expect(page.getByTestId("mcp-name")).toHaveText("RouteHire");
   await expect(page.getByTestId("mcp-url")).toContainText("/api/mcp");
   await expect(page.getByTestId("mcp-url")).not.toContainText("127.0.0.1");
   await expect(page.getByRole("button", { name: /Copy MCP URL/i })).toBeVisible();

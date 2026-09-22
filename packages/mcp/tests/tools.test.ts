@@ -16,7 +16,7 @@ describe("MCP tool wrappers (local)", () => {
   });
 
   it("get_job returns one", () => {
-    const job = getJobLocal("wm-cdl-roll-off-richmond");
+    const job = getJobLocal("wm-2353393");
     expect(job?.title).toMatch(/CDL/i);
   });
 
@@ -46,7 +46,7 @@ describe("MCP tool wrappers (local)", () => {
   });
 
   it("quote_hire_fee returns fee", () => {
-    const quote = quoteHireFeeLocal("capital-waste-cdl-local");
+    const quote = quoteHireFeeLocal("capital-3535750");
     expect(quote?.contingent_fee_usd).toBeGreaterThan(0);
   });
 });

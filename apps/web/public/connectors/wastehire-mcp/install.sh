@@ -49,7 +49,7 @@ for (const file of targets) {
       data = JSON.parse(fs.readFileSync(file, "utf8") || "{}");
     }
     data.mcpServers = data.mcpServers || {};
-    data.mcpServers.wastehire = entry;
+    data.mcpServers.routehire = entry;
     fs.writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
     console.log("Registered:", file);
   } catch (e) {

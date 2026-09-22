@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "wastehire": {
+    "routehire": {
       "command": "node",
       "args": ["${HOME}/.wastehire-mcp/index.mjs"],
       "env": {
