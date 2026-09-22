@@ -1,11 +1,10 @@
 {
   "mcpServers": {
-    "routehire": {
-      "command": "npm",
-      "args": ["run", "start", "--workspace=@routehire/mcp"],
-      "cwd": ".",
+    "wastehire": {
+      "command": "node",
+      "args": ["${HOME}/.wastehire-mcp/index.mjs"],
       "env": {
-        "ROUTEHIRE_API_URL": "http://127.0.0.1:3000"
+        "WASTEHIRE_API_URL": "https://web-flame-eta-28.vercel.app"
       }
     }
   }

@@ -1,8 +1,8 @@
 # UX moat research (freight + CDL hiring)
 
-## Best UX among Convoy-class set (for RouteHire)
+## Best UX among Convoy-class set (for WasteHire)
 
-| Product | Best at | Steal for RouteHire? |
+| Product | Best at | Steal for WasteHire? |
 |---------|---------|----------------------|
 | **Uber Freight** | Sticky preference search, **live match count** as filters change, sort by what drivers care about, clear cards + one primary action | **Yes — primary inspiration for hiring lead-gen** |
 | **Convoy Platform** | Instant book / bid, upfront pay on card, “no phone tag” status | Yes — post-submit certainty (“you’re in”) |

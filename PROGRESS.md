@@ -1,4 +1,4 @@
-# RouteHire — conversation map
+# WasteHire — conversation map
 
 ## Shipped (demo)
 - API-first demand index (bonus, urgency, trending, home_daily, equipment)
@@ -12,4 +12,4 @@
 See `openspec/ASPIRATIONAL.md` — SMS, phone interview agent, live ATS, TrashLab embed.
 
 ## Demo for you
-Use `DEMO.md` — Press is **not** in nav (`/press` still exists if needed).
+Use `DEMO.md` for the 5-min video (3 min demand / 2 min supply). Press one-pager + roadmap at `/press` (not in nav).

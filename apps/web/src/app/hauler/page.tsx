@@ -47,11 +47,63 @@ function HaulerInner() {
       <p className="hero-mark">Hiring desk</p>
       <h1>Place local talent. Pay on hire.</h1>
       <p className="lead">
-        For owners, recruiters, dispatchers, and whoever picks up the phone. Free desk + MCP. Flat contingent fee
-        when a RouteHire candidate starts — 90-day replacement.
+        Free desk + Claude connector. You only pay a <strong>flat contingent fee</strong> when a WasteHire
+        seeker starts — not a % of salary, not a SaaS subscription. 90-day replacement.
       </p>
-      <a className="btn" href="/hauler/mcp">
-        MCP for recruiters &amp; dispatchers
+
+      <div className="next-card">
+        <p className="next-card-title">Flat fee schedule</p>
+        <p className="meta" style={{ marginBottom: "0.65rem" }}>
+          Same published bands as{" "}
+          <a href="https://wasterecruiters.com/rates/" target="_blank" rel="noreferrer">
+            Waste Recruiters rates
+          </a>
+          — contingent on start, not a % of salary.
+        </p>
+        <ul className="why-chat">
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            Under $50,000 → <strong>$7,500</strong>
+          </li>
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            $50,000 – $74,999 → <strong>$10,000</strong>
+          </li>
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            $75,000 – $99,999 → <strong>$15,000</strong>
+          </li>
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            $100,000 – $124,999 → <strong>$20,000</strong>
+          </li>
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            $125,000 – $149,999 → <strong>$25,000</strong>
+          </li>
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            $150,000+ → <strong>negotiable</strong>
+          </li>
+        </ul>
+        <p className="meta" style={{ marginTop: "0.65rem" }}>
+          Net 30 from start date · 90-day replacement · SaaS $0
+        </p>
+      </div>
+      <a className="btn btn-cta" href="/hauler/mcp">
+        Claude connector
       </a>
       <a className="btn btn-secondary" href="/jobs">
         Demand index
@@ -74,29 +126,29 @@ function HaulerInner() {
             disabled={loading}
             onClick={() => markHire(job.id)}
           >
-            Mark hire (demo fee)
+            Quote flat fee
           </button>
         </div>
       ))}
 
       {fee != null && (
         <div className="card" data-testid="hire-fee">
-          <strong>Contingent fee due: ${fee.toLocaleString()}</strong>
+          <strong>Flat contingent fee: ${fee.toLocaleString()}</strong>
           <p className="meta" style={{ marginTop: "0.5rem" }}>
-            90-day replacement · SaaS $0
+            Due on start · 90-day replacement · SaaS $0
           </p>
         </div>
       )}
 
       <h2 style={{ fontSize: "1rem", marginTop: "1.5rem" }}>
-        Opt-in talent ({shortlist.length})
+        Opt-in seekers ({shortlist.length})
       </h2>
       {shortlist.length === 0 ? (
-        <p className="meta">No opted-in drivers yet — send them to the home page ZIP form.</p>
+        <p className="meta">No opted-in seekers yet — send them to the home page ZIP chat.</p>
       ) : (
         shortlist.map((c) => (
           <div key={c.session_id} className="card">
-            <strong>{c.first_name || "Candidate"}</strong>
+            <strong>{c.first_name || "Seeker"}</strong>
             <p className="meta">
               {c.role_interest} · CDL {c.cdl_class} · ZIP {c.zip}
             </p>

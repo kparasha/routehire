@@ -1,7 +1,7 @@
 # RH-05 MCP connector
 
 ## Capability
-Stdio MCP so Cursor / hauler agents / job-provider bots can query RouteHire without scraping UIs.
+Stdio MCP so Cursor / hauler agents / job-provider bots can query WasteHire without scraping UIs.
 
 ## Tools
 | Tool | Audience | Notes |
@@ -15,7 +15,7 @@ Stdio MCP so Cursor / hauler agents / job-provider bots can query RouteHire with
 
 ## Config
 ```json
-{ "mcpServers": { "routehire": { "command": "node", "args": ["packages/mcp/dist/index.js"] } } }
+{ "mcpServers": { "wastehire": { "command": "node", "args": ["packages/mcp/dist/index.js"] } } }
 ```
 
 ## Acceptance

@@ -1,4 +1,4 @@
--- RouteHire persistence (wire when SUPABASE_URL set)
+-- WasteHire persistence (Supabase)
 
 create table if not exists jobs (
   id text primary key,
@@ -40,22 +40,28 @@ create table if not exists intake_sessions (
 );
 
 alter table intake_sessions enable row level security;
-drop policy if exists "no anon read intake" on intake_sessions;
-create policy "no anon read intake" on intake_sessions for select using (false);
 
 create table if not exists candidates (
   id uuid primary key default gen_random_uuid(),
-  session_id text references intake_sessions(id),
+  session_id text unique references intake_sessions(id),
   opt_in_talent_pool boolean not null default false,
   accepted_terms_at timestamptz,
   generated_resume_json jsonb,
   resume_text text,
+  first_name text,
+  zip text,
+  role_interest text,
+  cdl_class text,
+  schedule_preference text,
+  phone text,
   created_at timestamptz default now()
 );
 
+create index if not exists candidates_opt_in_idx on candidates (opt_in_talent_pool) where opt_in_talent_pool = true;
+create index if not exists candidates_zip_idx on candidates (zip);
+create index if not exists candidates_role_idx on candidates (role_interest);
+
 alter table candidates enable row level security;
-drop policy if exists "no anon read candidates" on candidates;
-create policy "no anon read candidates" on candidates for select using (false);
 
 create table if not exists hires (
   id uuid primary key default gen_random_uuid(),
@@ -67,5 +73,13 @@ create table if not exists hires (
 );
 
 alter table hires enable row level security;
+
+drop policy if exists "no anon read intake" on intake_sessions;
+create policy "no anon read intake" on intake_sessions for select using (false);
+drop policy if exists "no anon read candidates" on candidates;
+create policy "no anon read candidates" on candidates for select using (false);
 drop policy if exists "no anon read hires" on hires;
 create policy "no anon read hires" on hires for select using (false);
+
+-- See also job_seeker_rpcs migration applied via Supabase MCP:
+-- upsert_intake_session, save_job_seeker, list_job_seeker_shortlist, get_intake_session

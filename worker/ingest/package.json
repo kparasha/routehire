@@ -1,11 +1,11 @@
 {
-  "name": "@routehire/ingest-worker",
+  "name": "@wastehire/ingest-worker",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "@routehire/core": "*"
+    "@wastehire/core": "*"
   }
 }

@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: RouteHire API
+  title: WasteHire API
   version: 0.2.0
   description: Local waste hiring — demand index, phone intake, hauler fees
 servers:

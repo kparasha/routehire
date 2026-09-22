@@ -12,7 +12,7 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command:
-      "npm run build --workspace=@routehire/web && npm run start --workspace=@routehire/web -- -p 3000 -H 127.0.0.1",
+      "npm run build --workspace=@wastehire/web && npm run start --workspace=@wastehire/web -- -p 3000 -H 127.0.0.1",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: true,
     timeout: 180_000,

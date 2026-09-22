@@ -1,4 +1,4 @@
-const baseUrl = () => process.env.ROUTEHIRE_API_URL || "http://localhost:3000";
+const baseUrl = () => process.env.WASTEHIRE_API_URL || "http://localhost:3000";
 
 export async function apiGet(path: string, params?: Record<string, string>) {
   const url = new URL(path, baseUrl());

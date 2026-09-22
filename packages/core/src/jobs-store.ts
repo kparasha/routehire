@@ -145,8 +145,8 @@ export type IntakeSession = {
 };
 
 type StoreGlobal = typeof globalThis & {
-  __routehire_sessions?: Map<string, IntakeSession>;
-  __routehire_talent?: Array<{
+  __wastehire_sessions?: Map<string, IntakeSession>;
+  __wastehire_talent?: Array<{
     session_id: string;
     resume: GeneratedResume;
     resume_text: string;
@@ -154,12 +154,12 @@ type StoreGlobal = typeof globalThis & {
 };
 
 const g = globalThis as StoreGlobal;
-const sessions = g.__routehire_sessions ?? new Map<string, IntakeSession>();
-g.__routehire_sessions = sessions;
+const sessions = g.__wastehire_sessions ?? new Map<string, IntakeSession>();
+g.__wastehire_sessions = sessions;
 const talentPool =
-  g.__routehire_talent ??
+  g.__wastehire_talent ??
   ([] as Array<{ session_id: string; resume: GeneratedResume; resume_text: string }>);
-g.__routehire_talent = talentPool;
+g.__wastehire_talent = talentPool;
 
 export function createIntakeSession(): IntakeSession {
   const id = `ses_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -179,6 +179,12 @@ export function createIntakeSession(): IntakeSession {
 
 export function getIntakeSession(id: string): IntakeSession | undefined {
   return sessions.get(id);
+}
+
+/** Rehydrate a session from durable storage into this process. */
+export function hydrateIntakeSession(session: IntakeSession) {
+  sessions.set(session.id, { ...session, answers: { ...session.answers } });
+  return sessions.get(session.id)!;
 }
 
 export function patchIntakeAnswer(id: string, question_id: string, value: string): IntakeSession | null {

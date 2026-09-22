@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("home shows live match count for prefs", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByTestId("live-match-count")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Build my driver profile" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Chat to find seats/i })).toBeVisible();
 });
 
 test("jobs page shows bonus and home-daily badges", async ({ page }) => {
@@ -48,24 +48,27 @@ test("agentic intake completes for dispatch path", async ({ page }) => {
   await expect(page.getByText(/pay/i).first()).toBeVisible();
   await page.getByTestId("intake-next").click(); // pay default
   await expect(page.getByText(/mobile|number/i)).toBeVisible();
-  await skipOptional(page);
+  await answerText(page, "555-0100");
   await expect(page.getByText(/Email/i)).toBeVisible();
   await skipOptional(page);
 
   await expect(page.getByTestId("intake-complete")).toBeVisible({ timeout: 20_000 });
   await expect(page.getByTestId("match-count")).toContainText("seat");
   await expect(page.getByText("What happens next")).toBeVisible();
+  await expect(page.locator(".next-ticks .tick").first()).toBeVisible();
 });
 
 test("hauler hire shows contingent fee", async ({ page }) => {
   await page.goto("/hauler");
-  await page.getByRole("button", { name: /Mark hire/ }).first().click();
+  await page.getByRole("button", { name: /Quote flat fee/ }).first().click();
   await expect(page.getByTestId("hire-fee")).toBeVisible();
 });
 
-test("MCP config page exposes connector JSON and tool smoke", async ({ page }) => {
+test("MCP page shows Claude custom connector name and remote URL", async ({ page }) => {
   await page.goto("/hauler/mcp");
-  await expect(page.getByTestId("mcp-config")).toContainText("ROUTEHIRE_API_URL");
-  await page.getByRole("button", { name: "list_shortlist" }).click();
-  await expect(page.getByTestId("mcp-result")).toContainText("candidates");
+  await expect(page.getByRole("heading", { name: /Add WasteHire in Claude/i })).toBeVisible();
+  await expect(page.getByTestId("mcp-name")).toHaveText("WasteHire");
+  await expect(page.getByTestId("mcp-url")).toContainText("/api/mcp");
+  await expect(page.getByTestId("mcp-url")).not.toContainText("127.0.0.1");
+  await expect(page.getByRole("button", { name: /Copy MCP URL/i })).toBeVisible();
 });

@@ -40,8 +40,6 @@ function IntakeInner() {
     setQuestion(data.next_question);
     setStep("chat");
 
-    // Apply home-page prefs silently
-    let answers = { ...data.session.answers };
     const prefills: Record<string, string> = {};
     if (zipPrefill) prefills.zip = zipPrefill;
     if (cdlPrefill) prefills.cdl_class = cdlPrefill;
@@ -53,7 +51,6 @@ function IntakeInner() {
         body: JSON.stringify({ question_id, value: v }),
       });
       const d = await r.json();
-      answers = d.session.answers;
       setQuestion(d.next_question);
     }
   }, [zipPrefill, cdlPrefill, schedulePrefill]);
@@ -102,7 +99,7 @@ function IntakeInner() {
         ...m,
         {
           role: "agent",
-          text: "Profile’s in. Expect a call when a hauler wants to talk.",
+          text: "You’re on the list. Expect a call when a hauler wants to talk.",
         },
       ]);
       setStep("done");
@@ -121,49 +118,71 @@ function IntakeInner() {
   if (step === "terms") {
     return (
       <main className="container">
-        <p className="hero-mark">Driver agent</p>
-        <h1>Let’s build your profile</h1>
-        <p className="lead">Chat through a few questions. We ask only what fits the job you want — no resume upload.</p>
-        <div className="card">
-          <label className="checkbox-row">
-            <input type="checkbox" checked={optIn} onChange={(e) => setOptIn(e.target.checked)} />
-            <span>Share my profile with haulers when I match (on by default)</span>
-          </label>
-        </div>
-        <button type="button" className="btn" onClick={startSession}>
+        <p className="hero-mark">Job seeker agent</p>
+        <h1>Chat to find local seats</h1>
+        <p className="lead">
+          A few questions for the job you want. We match you to haulers near your ZIP — they call
+          when there’s a fit. No resume upload.
+        </p>
+        <button type="button" className="btn btn-cta" onClick={startSession}>
           Start chat
         </button>
+        <label className="opt-in-quiet">
+          <input type="checkbox" checked={optIn} onChange={(e) => setOptIn(e.target.checked)} />
+          <span>Share my profile with matching haulers</span>
+        </label>
       </main>
     );
   }
 
   if (step === "done" && coach) {
     return (
-      <main className="container" data-testid="intake-complete">
-        <div className="success-check">✓</div>
+      <main className="container done-screen" data-testid="intake-complete">
+        <div className="success-check success-check-lg" aria-hidden>
+          ✓
+        </div>
         <h1>You&apos;re on the list</h1>
         <p className="lead">We match nearby seats. Haulers call when they want to talk.</p>
-        <div className="card">
-          <strong>What happens next</strong>
-          <ul className="meta" style={{ lineHeight: 1.55, margin: "0.5rem 0 0", paddingLeft: "1.1rem" }}>
-            <li>Local matches from your ZIP</li>
-            <li>You get a call</li>
-            <li>Phone agent — soon</li>
+
+        <div className="next-card">
+          <p className="next-card-title">What happens next</p>
+          <ul className="next-ticks">
+            <li>
+              <span className="tick" aria-hidden>
+                ✓
+              </span>
+              <span>Local matches from your ZIP</span>
+            </li>
+            <li>
+              <span className="tick" aria-hidden>
+                ✓
+              </span>
+              <span>You get a call</span>
+            </li>
+            <li>
+              <span className="tick tick-soon" aria-hidden>
+                ○
+              </span>
+              <span>Phone agent — soon</span>
+            </li>
           </ul>
         </div>
-        <pre className="card" style={{ whiteSpace: "pre-wrap", fontSize: "0.85rem" }}>
-          {coach.resume_text}
-        </pre>
-        <p data-testid="match-count" className="meta">
-          {coach.matched_job_ids.length} seat(s) already look like a fit.
+
+        <p data-testid="match-count" className="match-pulse">
+          <strong>{coach.matched_job_ids.length}</strong> seat(s) already look like a fit
         </p>
+
+        <details className="profile-details">
+          <summary>Your profile</summary>
+          <pre className="profile-pre">{coach.resume_text}</pre>
+        </details>
       </main>
     );
   }
 
   return (
     <main className="container agent-shell">
-      <p className="hero-mark">RouteHire agent</p>
+      <p className="hero-mark">WasteHire agent</p>
       <div className="chat" data-testid="agent-chat">
         {msgs.map((m, i) => (
           <div key={i} className={m.role === "agent" ? "bubble agent" : "bubble you"}>
@@ -187,7 +206,17 @@ function IntakeInner() {
               data-testid="intake-input"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder={question.optional ? "Optional — tap send to skip" : "Type your answer"}
+              placeholder={
+                question.optional
+                  ? "Optional — send blank to skip"
+                  : question.id === "phone"
+                    ? "Mobile number"
+                    : "Type your answer"
+              }
+              inputMode={question.id === "phone" ? "tel" : "text"}
+              autoComplete={
+                question.id === "phone" ? "tel" : question.id === "first_name" ? "given-name" : "off"
+              }
               onKeyDown={(e) => {
                 if (e.key === "Enter") void sendAnswer();
               }}
@@ -210,7 +239,13 @@ function IntakeInner() {
 
 export default function IntakePage() {
   return (
-    <Suspense fallback={<main className="container"><p className="lead">Loading…</p></main>}>
+    <Suspense
+      fallback={
+        <main className="container">
+          <p className="lead">Loading…</p>
+        </main>
+      }
+    >
       <IntakeInner />
     </Suspense>
   );

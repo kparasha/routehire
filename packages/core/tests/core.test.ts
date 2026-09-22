@@ -37,9 +37,23 @@ describe("computeUrgencyScore", () => {
 });
 
 describe("computeContingentFee", () => {
-  it("matches Waste Recruiters bands", () => {
+  it("matches Waste Recruiters bands from wasterecruiters.com/rates", () => {
     expect(computeContingentFee(45_000)).toBe(7_500);
+    expect(computeContingentFee(50_000)).toBe(10_000);
+    expect(computeContingentFee(74_999)).toBe(10_000);
     expect(computeContingentFee(85_000)).toBe(15_000);
+    expect(computeContingentFee(100_000)).toBe(20_000);
+    expect(computeContingentFee(125_000)).toBe(25_000);
+  });
+});
+
+describe("quoteContingentFee", () => {
+  it("marks $150k+ as negotiable", async () => {
+    const { quoteContingentFee } = await import("../src/fees");
+    const q = quoteContingentFee(160_000);
+    expect(q.negotiable).toBe(true);
+    expect(q.contingent_fee_usd).toBeNull();
+    expect(q.source_url).toContain("wasterecruiters.com/rates");
   });
 });
 
@@ -145,7 +159,7 @@ describe("nextIntakeQuestion harness", () => {
     ).toBe("cdl_class");
   });
 
-  it("marks complete", () => {
+  it("requires name and phone before complete", () => {
     expect(
       isIntakeComplete({
         role_interest: "sales",
@@ -155,6 +169,18 @@ describe("nextIntakeQuestion harness", () => {
         schedule_preference: "home_daily",
         pay_band: "75_100k",
         phone: "",
+        email: "",
+      }),
+    ).toBe(false);
+    expect(
+      isIntakeComplete({
+        role_interest: "sales",
+        first_name: "Sam",
+        zip: "30301",
+        years_experience: "5",
+        schedule_preference: "home_daily",
+        pay_band: "75_100k",
+        phone: "555-0100",
         email: "",
       }),
     ).toBe(true);

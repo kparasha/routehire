@@ -1,10 +1,10 @@
 {
-  "name": "@routehire/mcp",
+  "name": "@wastehire/mcp",
   "version": "0.1.0",
   "type": "module",
-  "description": "MCP connector for RouteHire hiring managers (jobs, shortlist, fees)",
+  "description": "MCP connector for WasteHire hiring managers (jobs, shortlist, fees)",
   "bin": {
-    "routehire-mcp": "./bin/routehire-mcp.mjs"
+    "wastehire-mcp": "./bin/wastehire-mcp.mjs"
   },
   "files": [
     "bin",
@@ -13,13 +13,13 @@
   ],
   "scripts": {
     "build": "tsc --noEmit",
-    "start": "node ./bin/routehire-mcp.mjs",
+    "start": "node ./bin/wastehire-mcp.mjs",
     "test": "vitest run",
     "smoke": "node ./scripts/smoke-bin.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "@routehire/core": "*",
+    "@wastehire/core": "*",
     "zod": "^3.24.1"
   },
   "devDependencies": {

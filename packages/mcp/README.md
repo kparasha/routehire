@@ -1,4 +1,4 @@
-# RouteHire MCP
+# WasteHire MCP
 
 Packaged stdio MCP for **hiring managers** (owners, recruiters, dispatchers, phone screeners).
 
@@ -6,9 +6,9 @@ Packaged stdio MCP for **hiring managers** (owners, recruiters, dispatchers, pho
 
 ```bash
 npm install
-npm run start --workspace=@routehire/mcp
+npm run start --workspace=@wastehire/mcp
 # or globally from package:
-npx routehire-mcp
+npx wastehire-mcp
 ```
 
 ## Cursor config
@@ -18,11 +18,11 @@ Use the live generator at **`/hauler/mcp`**, or:
 ```json
 {
   "mcpServers": {
-    "routehire": {
+    "wastehire": {
       "command": "npx",
       "args": ["tsx", "packages/mcp/src/index.ts"],
       "cwd": "<repo>",
-      "env": { "ROUTEHIRE_API_URL": "http://127.0.0.1:3000" }
+      "env": { "WASTEHIRE_API_URL": "http://127.0.0.1:3000" }
     }
   }
 }
@@ -41,6 +41,6 @@ Use the live generator at **`/hauler/mcp`**, or:
 ## Test
 
 ```bash
-npm test --workspace=@routehire/mcp
-npm run smoke --workspace=@routehire/mcp
+npm test --workspace=@wastehire/mcp
+npm run smoke --workspace=@wastehire/mcp
 ```

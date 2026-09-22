@@ -9,7 +9,7 @@ Normalized waste/recycling job demand with bonus, urgency, trending, schedule (h
 - `POST /api/v1/jobs/refresh` — Bearer CRON_SECRET
 
 ## Fields
-See `JobSchema` in `@routehire/core`. Prefer **home_daily** for residential / roll-off / local CDL seats.
+See `JobSchema` in `@wastehire/core`. Prefer **home_daily** for residential / roll-off / local CDL seats.
 
 ## Acceptance
 - Seed ≥5 jobs with at least 2 home_daily CDL roles and 1 bonus ≥ $2500

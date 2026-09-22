@@ -4,10 +4,10 @@
  */
 import { listShortlist } from "../src/tools.ts";
 
-const base = process.env.ROUTEHIRE_API_URL || "http://127.0.0.1:3000";
+const base = process.env.WASTEHIRE_API_URL || "http://127.0.0.1:3000";
 
 async function main() {
-  process.env.ROUTEHIRE_API_URL = base;
+  process.env.WASTEHIRE_API_URL = base;
   const session = await fetch(`${base}/api/v1/intake/sessions`, { method: "POST" }).then((r) => r.json());
   const id = session.session.id;
   const answers = {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { computeContingentFee, salaryMidpoint, getJobById } from "@routehire/core";
+import { computeContingentFee, salaryMidpoint, getJobById } from "@wastehire/core";
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as { job_id: string; candidate_session_id?: string };
@@ -12,6 +12,6 @@ export async function POST(request: NextRequest) {
     hire: body,
     contingent_fee_usd,
     guarantee_days: 90 as const,
-    message: "Pay only if you hire this RouteHire-sourced candidate.",
+    message: "Pay only if you hire this WasteHire-sourced candidate.",
   });
 }

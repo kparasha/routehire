@@ -1,0 +1,16 @@
+{
+  "name": "wastehire-mcp",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "WasteHire MCP connector for Claude Desktop, Cursor, and other agents — pairs with a hosted WasteHire API",
+  "bin": {
+    "wastehire-mcp": "./index.mjs"
+  },
+  "scripts": {
+    "start": "node ./index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  }
+}

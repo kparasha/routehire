@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
-import { createIntakeSession, nextIntakeQuestion } from "@routehire/core";
+import { createIntakeSession, nextIntakeQuestion } from "@wastehire/core";
+import { dbUpsertIntakeSession } from "@/lib/supabase";
 
 export async function POST() {
   const session = createIntakeSession();
+  try {
+    await dbUpsertIntakeSession(session.id, session.answers, false);
+  } catch (e) {
+    console.error(e);
+  }
   const next = nextIntakeQuestion(session.answers);
   return NextResponse.json(
     {

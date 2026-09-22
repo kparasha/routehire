@@ -1,5 +1,5 @@
 {
-  "name": "@routehire/core",
+  "name": "@wastehire/core",
   "version": "0.1.0",
   "type": "module",
   "main": "./src/index.ts",

@@ -13,7 +13,7 @@ export type Question = {
 /** Legacy flat list — tests / OpenAPI still accept these ids */
 export const INTAKE_QUESTIONS: Question[] = [
   { id: "role_interest", prompt: "What seat are you after?", options: ["driver", "mechanic", "dispatch", "sales", "pm", "other"] },
-  { id: "first_name", prompt: "First name?", optional: true },
+  { id: "first_name", prompt: "First name?" },
   { id: "zip", prompt: "ZIP code?" },
   { id: "cdl_class", prompt: "CDL class?", options: ["none", "A", "B"] },
   { id: "endorsements", prompt: "Endorsements? (or none)", optional: true },
@@ -21,7 +21,7 @@ export const INTAKE_QUESTIONS: Question[] = [
   { id: "schedule_preference", prompt: "Schedule?", options: ["home_daily", "regional", "otr"] },
   { id: "equipment", prompt: "Equipment?", options: ["roll_off", "residential", "front_load", "any"] },
   { id: "pay_band", prompt: "Pay target?", options: ["under_50k", "50_75k", "75_100k", "100k_plus"] },
-  { id: "phone", prompt: "Mobile (so haulers can call)?", optional: true },
+  { id: "phone", prompt: "Mobile (so haulers can call)?" },
   { id: "email", prompt: "Email?", optional: true },
 ];
 
@@ -37,8 +37,7 @@ const Q = {
   name: {
     id: "first_name",
     prompt: "What should we call you?",
-    agent_line: "Got it. What’s your first name?",
-    optional: true,
+    agent_line: "Got it — first name? Haulers ask for you by name.",
   },
   zip: {
     id: "zip",
@@ -103,13 +102,12 @@ const Q = {
   phone: {
     id: "phone",
     prompt: "Best mobile number?",
-    agent_line: "Haulers usually call — what’s the best number?",
-    optional: true,
+    agent_line: "Haulers call when there’s a seat — what’s your mobile?",
   },
   email: {
     id: "email",
     prompt: "Email? (optional)",
-    agent_line: "Email if you want a copy of your profile.",
+    agent_line: "Email if you want a copy of your profile — or skip.",
     optional: true,
   },
 } as const;
@@ -123,7 +121,7 @@ function has(answers: AnswerMap, key: string) {
  */
 export function nextIntakeQuestion(answers: AnswerMap): Question | null {
   if (!answers.role_interest) return { ...Q.role };
-  if (!has(answers, "first_name")) return { ...Q.name };
+  if (!answers.first_name?.trim()) return { ...Q.name };
   if (!answers.zip) return { ...Q.zip };
 
   const role = answers.role_interest;
@@ -155,7 +153,7 @@ export function nextIntakeQuestion(answers: AnswerMap): Question | null {
 
   if (!answers.schedule_preference) return { ...Q.schedule };
   if (!answers.pay_band) return { ...Q.pay };
-  if (!has(answers, "phone")) return { ...Q.phone };
+  if (!answers.phone?.trim()) return { ...Q.phone };
   if (!has(answers, "email")) return { ...Q.email };
   return null;
 }

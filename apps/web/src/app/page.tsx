@@ -52,11 +52,33 @@ export default function HomePage() {
   return (
     <main className="hero-board">
       <div className="hero-panel">
-        <p className="hero-mark">Local waste &amp; recycling</p>
+        <p className="hero-mark">WasteHire</p>
         <h1>Home every night. Seats near your ZIP.</h1>
         <p className="lead">
-          Roll-off, residential, front-load — not OTR freight. One profile. When a hauler matches, they call you.
+          Chat 2 minutes. We build your profile and put you in front of local haulers hiring for
+          roll-off, residential, and front-load — not OTR freight boards.
         </p>
+
+        <ul className="why-chat">
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            Tell us the job you want — we only ask what fits
+          </li>
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            Match to open seats near your ZIP
+          </li>
+          <li>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            Haulers call you when they want to talk
+          </li>
+        </ul>
 
         <div className="pref-bar" aria-label="Preferences">
           <button
@@ -89,11 +111,15 @@ export default function HomePage() {
           </button>
         </div>
 
-        {matchCount != null && (
-          <p className="match-pulse" data-testid="live-match-count">
-            <strong>{matchCount}</strong> open seats fit these prefs in our demand index
-          </p>
-        )}
+        <p className="match-pulse" data-testid="live-match-count">
+          {matchCount != null ? (
+            <>
+              <strong>{matchCount}</strong> open seats fit these prefs right now
+            </>
+          ) : (
+            <>Checking open seats…</>
+          )}
+        </p>
 
         <form className="lead-form" onSubmit={continueApply}>
           <label>
@@ -110,16 +136,11 @@ export default function HomePage() {
               maxLength={10}
             />
           </label>
-          <button type="submit" className="btn">
-            Build my driver profile
+          <button type="submit" className="btn btn-cta">
+            Chat to find seats near me
           </button>
         </form>
-        <p className="fineprint">Free · ~2 minutes · No PDF resume · No spam boards</p>
-        <ul className="trust-row">
-          <li>Home daily first</li>
-          <li>Haulers call you</li>
-          <li>Pay only if they hire</li>
-        </ul>
+        <p className="fineprint">Free · ~2 min · No PDF resume · Haulers call you</p>
       </div>
     </main>
   );

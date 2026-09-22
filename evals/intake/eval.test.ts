@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { buildResumeFromAnswers, coachFromResume, getJobs } from "@routehire/core";
+import { buildResumeFromAnswers, coachFromResume, getJobs } from "@wastehire/core";
 
 const fixture = JSON.parse(
   readFileSync(join(__dirname, "driver-home-daily.json"), "utf-8"),

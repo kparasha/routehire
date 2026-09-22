@@ -13,7 +13,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@routehire/core": path.resolve(__dirname, "packages/core/src/index.ts"),
+      "@wastehire/core": path.resolve(__dirname, "packages/core/src/index.ts"),
     },
   },
 });

@@ -4,8 +4,8 @@
 
 ```bash
 npm install
-npm run build --workspace=@routehire/web
-npm run start --workspace=@routehire/web -- -p 3000 -H 127.0.0.1
+npm run build --workspace=@wastehire/web
+npm run start --workspace=@wastehire/web -- -p 3000 -H 127.0.0.1
 ```
 
 Open http://127.0.0.1:3000
@@ -18,32 +18,36 @@ Open http://127.0.0.1:3000
 ```json
 {
   "mcpServers": {
-    "routehire": {
+    "wastehire": {
       "command": "npm",
-      "args": ["run", "start", "--workspace=@routehire/mcp"],
+      "args": ["run", "start", "--workspace=@wastehire/mcp"],
       "cwd": "/absolute/path/to/this/repo",
       "env": {
-        "ROUTEHIRE_API_URL": "http://127.0.0.1:3000"
+        "WASTEHIRE_API_URL": "http://127.0.0.1:3000"
       }
     }
   }
 }
 ```
 
-3. Smoke: `ROUTEHIRE_API_URL=http://127.0.0.1:3000 npx tsx packages/mcp/scripts/test-shortlist.mjs`
+3. Smoke: `WASTEHIRE_API_URL=http://127.0.0.1:3000 npx tsx packages/mcp/scripts/test-shortlist.mjs`
 
-Without `ROUTEHIRE_API_URL`, MCP uses its own in-memory store (empty) — not the web talent pool.
+Without `WASTEHIRE_API_URL`, MCP uses its own in-memory store (empty) — not the web talent pool.
 
 ## Vercel
 
-Root Directory: `apps/web` (see `apps/web/vercel.json`). Install from monorepo root.
+Monorepo root is the Vercel project root (not `apps/web`).
 
 ```bash
-npx vercel --cwd apps/web --prod
+npx vercel --prod
 ```
 
-Set nothing required for the in-memory demo. For shared talent across instances, wire Supabase (`supabase/migrations/001_routehire.sql`).
+Install: `npm install` · Build: `npm run build --workspace=@wastehire/web` · Output: `apps/web/.next`
+
+Do **not** use `cd ../.. && npm install` — that breaks Vercel (`idealTree already exists`).
+
+Set nothing required for the in-memory demo. For shared talent across instances, wire Supabase (`supabase/migrations/001_wastehire.sql`).
 
 ## Railway (ingest)
 
-Service from `worker/ingest`. Cron: `node index.js` with `ROUTEHIRE_API_URL` + `CRON_SECRET`.
+Service from `worker/ingest`. Cron: `node index.js` with `WASTEHIRE_API_URL` + `CRON_SECRET`.

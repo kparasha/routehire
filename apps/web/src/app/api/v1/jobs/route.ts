@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { queryJobs, JobSchema } from "@routehire/core";
+import { queryJobs, JobSchema } from "@wastehire/core";
 
 export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;

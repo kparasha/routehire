@@ -1,5 +1,5 @@
 {
-  "name": "routehire",
+  "name": "wastehire",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -9,11 +9,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "dev": "npm run dev --workspace=@routehire/web",
-    "build": "npm run build --workspace=@routehire/web",
+    "dev": "npm run dev --workspace=@wastehire/web",
+    "build": "npm run build --workspace=@wastehire/web",
     "ingest": "node worker/ingest/index.js",
-    "mcp": "npm run start --workspace=@routehire/mcp",
-    "mcp:smoke": "npm run smoke --workspace=@routehire/mcp",
+    "mcp": "npm run start --workspace=@wastehire/mcp",
+    "mcp:smoke": "npm run smoke --workspace=@wastehire/mcp",
     "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {

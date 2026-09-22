@@ -11,7 +11,7 @@ import {
   searchJobs,
 } from "./tools";
 
-const server = new Server({ name: "routehire", version: "0.2.0" }, { capabilities: { tools: {} } });
+const server = new Server({ name: "wastehire", version: "0.2.0" }, { capabilities: { tools: {} } });
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
@@ -55,7 +55,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "list_shortlist",
       description:
-        "List opted-in candidates from the live RouteHire app (set ROUTEHIRE_API_URL). Includes resume_text; no phone/email.",
+        "List opted-in candidates from the live WasteHire app (set WASTEHIRE_API_URL). Includes resume_text; no phone/email.",
       inputSchema: { type: "object", properties: {} },
     },
     {

@@ -8,10 +8,10 @@ import {
   getTalentPoolShortlist,
   computeContingentFee,
   salaryMidpoint,
-} from "@routehire/core";
+} from "@wastehire/core";
 import { apiGet, apiPost } from "./rest-client";
 
-const useRemote = () => Boolean(process.env.ROUTEHIRE_API_URL);
+const useRemote = () => Boolean(process.env.WASTEHIRE_API_URL);
 
 export type SearchJobsArgs = {
   q?: string;

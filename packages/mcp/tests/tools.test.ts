@@ -6,7 +6,7 @@ import {
   listShortlistLocal,
   quoteHireFeeLocal,
 } from "../src/tools";
-import { nextIntakeQuestion, isIntakeComplete } from "@routehire/core";
+import { nextIntakeQuestion, isIntakeComplete } from "@wastehire/core";
 
 describe("MCP tool wrappers (local)", () => {
   it("search_jobs filters home_daily", () => {

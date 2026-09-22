@@ -45,7 +45,7 @@ function urgency({ bonus, days_open, role_family, hard_to_fill }) {
 async function probeSource(source) {
   try {
     const res = await fetch(source.url, {
-      headers: { "user-agent": "RouteHireIngest/0.1 (+https://routehire.local)" },
+      headers: { "user-agent": "WasteHireIngest/0.1 (+https://wastehire.local)" },
       signal: AbortSignal.timeout(8000),
     });
     return { id: source.id, ok: res.ok, status: res.status };
@@ -77,7 +77,7 @@ async function main() {
   const probes = await Promise.all(SOURCES.map(probeSource));
   console.log(JSON.stringify({ refreshed: enriched.length, probes, at: new Date().toISOString() }, null, 2));
 
-  const api = process.env.ROUTEHIRE_API_URL;
+  const api = process.env.WASTEHIRE_API_URL;
   const secret = process.env.CRON_SECRET;
   if (api) {
     const res = await fetch(`${api}/api/v1/jobs/refresh`, {

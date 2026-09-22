@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SiteNav } from "../components/SiteNav";
 
 export const metadata: Metadata = {
-  title: "RouteHire — Local hauler jobs, home every night",
+  title: "WasteHire — Local hauler jobs, home every night",
   description:
     "Build a free driver profile for local waste & recycling seats. No resume. Haulers call when you match.",
 };
@@ -19,13 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <nav className="top">
-          <a className="brand" href="/">
-            RouteHire
-          </a>
-          <a href="/intake">Drivers</a>
-          <a href="/hauler">Hiring</a>
-        </nav>
+        <SiteNav />
         {children}
       </body>
     </html>

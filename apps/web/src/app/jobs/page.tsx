@@ -46,7 +46,7 @@ export default function JobsPage() {
   }, [schedule, cdl, q]);
 
   const countLabel = useMemo(
-    () => `${jobs.length} demand seat${jobs.length === 1 ? "" : "s"} RouteHire can place into`,
+    () => `${jobs.length} demand seat${jobs.length === 1 ? "" : "s"} WasteHire can place into`,
     [jobs],
   );
 
@@ -56,7 +56,7 @@ export default function JobsPage() {
       <h1>Open seats we place into</h1>
       <p className="lead">
         Internal demand radar for recruiters, owners, dispatchers, and phone screeners. Drivers don&apos;t apply at
-        the source — RouteHire sources and places; you pull shortlists via the desk or MCP.
+        the source — WasteHire sources and places; you pull shortlists via the desk or MCP.
       </p>
 
       <div className="filters">

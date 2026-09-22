@@ -1,177 +1,131 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-type ToolName =
-  | "search_jobs"
-  | "get_trends"
-  | "list_shortlist"
-  | "quote_hire_fee"
-  | "match_profile";
+const FALLBACK_PROD = "https://web-flame-eta-28.vercel.app";
+
+function resolveHost(pageOrigin: string) {
+  try {
+    const u = new URL(pageOrigin);
+    if (u.hostname === "localhost" || u.hostname === "127.0.0.1") return FALLBACK_PROD;
+    return pageOrigin.replace(/\/$/, "");
+  } catch {
+    return FALLBACK_PROD;
+  }
+}
 
 export default function McpConfigPage() {
-  const [origin, setOrigin] = useState("http://127.0.0.1:3000");
-  const [result, setResult] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [pageOrigin, setPageOrigin] = useState("");
+  const [copied, setCopied] = useState<"url" | "name" | null>(null);
 
   useEffect(() => {
-    setOrigin(window.location.origin);
+    setPageOrigin(window.location.origin);
   }, []);
 
-  const config = useMemo(
-    () =>
-      JSON.stringify(
-        {
-          mcpServers: {
-            routehire: {
-              command: "npx",
-              args: ["tsx", "packages/mcp/src/index.ts"],
-              cwd: "<path-to-routehire-repo>",
-              env: {
-                ROUTEHIRE_API_URL: origin,
-              },
-            },
-          },
-        },
-        null,
-        2,
-      ),
-    [origin],
-  );
+  const host = resolveHost(pageOrigin || FALLBACK_PROD);
+  const connectorName = "WasteHire";
+  const connectorUrl = `${host}/api/mcp`;
 
-  async function runTool(name: ToolName) {
-    setBusy(true);
-    try {
-      if (name === "search_jobs") {
-        const res = await fetch(`${origin}/api/v1/jobs?schedule=home_daily&limit=3`);
-        setResult(JSON.stringify(await res.json(), null, 2));
-      } else if (name === "get_trends") {
-        const res = await fetch(`${origin}/api/v1/jobs/trends`);
-        setResult(JSON.stringify(await res.json(), null, 2));
-      } else if (name === "list_shortlist") {
-        const res = await fetch(`${origin}/api/v1/hauler/shortlist`);
-        setResult(JSON.stringify(await res.json(), null, 2));
-      } else if (name === "quote_hire_fee") {
-        const res = await fetch(`${origin}/api/v1/hires`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ job_id: "capital-waste-cdl-local" }),
-        });
-        setResult(JSON.stringify(await res.json(), null, 2));
-      } else if (name === "match_profile") {
-        const session = await fetch(`${origin}/api/v1/intake/sessions`, { method: "POST" }).then((r) =>
-          r.json(),
-        );
-        const id = session.session.id as string;
-        const answers: Record<string, string> = {
-          zip: "30301",
-          cdl_class: "B",
-          endorsements: "none",
-          years_experience: "3",
-          role_interest: "driver",
-          schedule_preference: "home_daily",
-          pay_band: "50_75k",
-        };
-        for (const [question_id, value] of Object.entries(answers)) {
-          await fetch(`${origin}/api/v1/intake/sessions/${id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question_id, value }),
-          });
-        }
-        const done = await fetch(`${origin}/api/v1/intake/sessions/${id}/complete`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            opt_in_talent_pool: true,
-            accepted_terms_at: new Date().toISOString(),
-          }),
-        }).then((r) => r.json());
-        setResult(JSON.stringify(done.coach, null, 2));
-      }
-    } catch (e) {
-      setResult(String(e));
-    }
-    setBusy(false);
+  async function copy(kind: "url" | "name", value: string) {
+    await navigator.clipboard.writeText(value);
+    setCopied(kind);
+    setTimeout(() => setCopied(null), 1600);
   }
 
   return (
-    <main className="container wide">
-      <p className="hero-mark">Hiring managers · MCP</p>
-      <h1>RouteHire connector</h1>
+    <main className="container">
+      <p className="hero-mark">Hiring · Connector</p>
+      <h1>Add WasteHire in Claude</h1>
       <p className="lead">
-        For owners, recruiters, dispatchers, and phone-line staff using Cursor or any MCP client. Query open seats,
-        shortlists, and contingent fees without leaving your agent.
+        Custom connector (remote MCP). Paste the name and URL in Claude → Customize → Connectors → Add
+        custom connector. Auth is on the roadmap — open for demo.
       </p>
 
-      <div className="card">
-        <strong>Install</strong>
-        <p className="meta" style={{ margin: "0.4rem 0 0.75rem" }}>
-          From the RouteHire repo: <code>npm install && npm run start --workspace=@routehire/mcp</code>
-        </p>
-        <p className="meta">Paste into Cursor MCP settings:</p>
-        <pre className="code-block" data-testid="mcp-config">
-          {config}
-        </pre>
-        <p className="meta" style={{ marginTop: "0.75rem" }}>
-          <strong>Important:</strong> set <code>ROUTEHIRE_API_URL</code> to this app so{" "}
-          <code>list_shortlist</code> returns candidates you added in the browser (same process as the hiring desk).
-        </p>
-      </div>
-
-      <div className="card">
-        <strong>Live tool smoke (REST behind MCP)</strong>
-        <p className="meta">Same payloads the MCP tools return — safe to click on this demo.</p>
-        <div className="tool-row">
-          <button type="button" disabled={busy} onClick={() => runTool("search_jobs")}>
-            search_jobs
-          </button>
-          <button type="button" disabled={busy} onClick={() => runTool("get_trends")}>
-            get_trends
-          </button>
-          <button type="button" disabled={busy} onClick={() => runTool("list_shortlist")}>
-            list_shortlist
-          </button>
-          <button type="button" disabled={busy} onClick={() => runTool("quote_hire_fee")}>
-            quote_hire_fee
-          </button>
-          <button type="button" disabled={busy} onClick={() => runTool("match_profile")}>
-            match_profile
+      <div className="next-card">
+        <p className="next-card-title">Custom connector</p>
+        <div className="connector-field">
+          <span className="meta">Name</span>
+          <code data-testid="mcp-name">{connectorName}</code>
+          <button type="button" className="linkish" onClick={() => copy("name", connectorName)}>
+            {copied === "name" ? "Copied" : "Copy"}
           </button>
         </div>
-        {result && (
-          <pre className="code-block" data-testid="mcp-result">
-            {result}
-          </pre>
-        )}
+        <div className="connector-field">
+          <span className="meta">Remote MCP URL</span>
+          <code data-testid="mcp-url">{connectorUrl}</code>
+          <button type="button" className="linkish" onClick={() => copy("url", connectorUrl)}>
+            {copied === "url" ? "Copied" : "Copy"}
+          </button>
+        </div>
+        <button
+          type="button"
+          className="btn btn-cta"
+          style={{ marginTop: "0.85rem" }}
+          onClick={() => copy("url", connectorUrl)}
+        >
+          {copied === "url" ? "URL copied" : "Copy MCP URL"}
+        </button>
+        <p className="meta" style={{ marginTop: "0.75rem" }}>
+          Claude docs:{" "}
+          <a
+            href="https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Custom connectors using remote MCP
+          </a>
+        </p>
       </div>
 
-      <div className="card">
-        <strong>Tools</strong>
-        <ul className="meta" style={{ lineHeight: 1.6 }}>
+      <div className="next-card">
+        <p className="next-card-title">Ask your agent</p>
+        <ul className="why-chat">
           <li>
-            <code>search_jobs</code> — demand index (home_daily preferred)
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            “List WasteHire shortlist — home daily near 30301”
           </li>
           <li>
-            <code>get_job</code> / <code>get_trends</code>
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            “Find CDL-B roll-off seats with a sign-on bonus”
           </li>
           <li>
-            <code>list_shortlist</code> — opt-in talent only (no phone/email)
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            “What are WasteHire’s flat placement fees?” / “Show the fee schedule”
           </li>
           <li>
-            <code>quote_hire_fee</code> — contingent fee for a seat
-          </li>
-          <li>
-            <code>match_profile</code> — answers → matches
+            <span className="tick" aria-hidden>
+              ✓
+            </span>
+            “Quote the flat fee for capital-waste-cdl-local”
           </li>
         </ul>
       </div>
 
-      <a className="btn btn-secondary" href="/hauler">
+      <details className="profile-details">
+        <summary>What’s inside (optional)</summary>
+        <ul className="meta" style={{ lineHeight: 1.65, margin: "0.75rem 0 0", paddingLeft: "1.1rem" }}>
+          <li>
+            <code>list_shortlist</code> — opted-in seekers
+          </li>
+          <li>
+            <code>search_jobs</code> — demand seats
+          </li>
+          <li>
+            <code>get_fee_schedule</code> / <code>quote_hire_fee</code> — Waste Recruiters flat rates
+          </li>
+          <li>
+            <code>get_job</code> / <code>get_trends</code> / <code>match_profile</code>
+          </li>
+        </ul>
+      </details>
+      <a className="btn btn-secondary" href="/hauler" style={{ marginTop: "1rem" }}>
         Back to hiring desk
-      </a>
-      <a className="btn btn-secondary" href="/jobs">
-        View demand index
       </a>
     </main>
   );

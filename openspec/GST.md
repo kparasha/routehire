@@ -1,4 +1,4 @@
-# RouteHire GST (Goal–Spec–Test)
+# WasteHire GST (Goal–Spec–Test)
 
 ## Goal
 Ship a working local waste hiring board: drivers find **home-daily** hauler jobs near ZIP without a resume; haulers get shortlists and pay only on hire; agents query demand via MCP.

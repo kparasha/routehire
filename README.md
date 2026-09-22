@@ -1,4 +1,4 @@
-# RouteHire
+# WasteHire
 
 Local waste hiring board — **home every night** CDL & ops seats for haulers. Drivers build a profile by phone (no resume). Haulers pay only when they hire.
 
@@ -8,7 +8,7 @@ Local waste hiring board — **home every night** CDL & ops seats for haulers. D
 npm install
 npm test
 npm run build
-npm run start --workspace=@routehire/web -- -p 3000 -H 127.0.0.1
+npm run start --workspace=@wastehire/web -- -p 3000 -H 127.0.0.1
 ```
 
 Open http://127.0.0.1:3000
