@@ -1,0 +1,15 @@
+{
+  "answers": {
+    "first_name": "Alex",
+    "zip": "30301",
+    "cdl_class": "B",
+    "endorsements": "none",
+    "years_experience": "4",
+    "role_interest": "driver",
+    "schedule_preference": "home_daily",
+    "pay_band": "50_75k",
+    "phone": "555-0100"
+  },
+  "expect_role": "driver",
+  "min_matches": 1
+}

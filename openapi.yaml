@@ -1,0 +1,49 @@
+openapi: 3.1.0
+info:
+  title: RouteHire API
+  version: 0.1.0
+servers:
+  - url: /api/v1
+paths:
+  /health:
+    get:
+      summary: Health check
+  /jobs:
+    get:
+      summary: Search demand index
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: bonus_min
+          in: query
+          schema: { type: number }
+        - name: urgency_min
+          in: query
+          schema: { type: number }
+        - name: trending
+          in: query
+          schema: { type: boolean }
+  /jobs/trends:
+    get:
+      summary: Market trends
+  /jobs/refresh:
+    post:
+      summary: Trigger ingest (Bearer CRON_SECRET)
+  /intake/sessions:
+    post:
+      summary: Create intake session
+  /intake/sessions/{id}:
+    get:
+      summary: Get session progress
+    patch:
+      summary: Append answer
+  /intake/sessions/{id}/complete:
+    post:
+      summary: Complete intake, build resume, match jobs
+  /hauler/shortlist:
+    get:
+      summary: Opt-in talent pool
+  /hires:
+    post:
+      summary: Record hire, contingent fee
