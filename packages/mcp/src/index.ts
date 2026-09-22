@@ -2,24 +2,30 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import { getJobLocal, getTrendsLocal, matchProfileLocal, searchJobsLocal } from "./tools.js";
+import {
+  getJob,
+  getTrendsTool,
+  listShortlist,
+  matchProfileLocal,
+  quoteHireFee,
+  searchJobs,
+} from "./tools";
 
-const server = new Server({ name: "routehire", version: "0.1.0" }, { capabilities: { tools: {} } });
+const server = new Server({ name: "routehire", version: "0.2.0" }, { capabilities: { tools: {} } });
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
     {
       name: "search_jobs",
-      description: "Search normalized waste industry job demand index",
+      description: "Search waste hauler demand (prefer schedule=home_daily)",
       inputSchema: {
         type: "object",
         properties: {
           q: { type: "string" },
           cdl_class: { type: "string" },
           role_family: { type: "string" },
+          schedule: { type: "string" },
           bonus_min: { type: "number" },
-          urgency_min: { type: "number" },
-          trending: { type: "boolean" },
         },
       },
     },
@@ -34,18 +40,31 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     },
     {
       name: "get_trends",
-      description: "Trending geos, role families, avg bonus",
+      description: "Market trends",
       inputSchema: { type: "object", properties: {} },
     },
     {
       name: "match_profile",
-      description: "Match intake answers to jobs (no PII storage)",
+      description: "Match intake answers to jobs",
       inputSchema: {
         type: "object",
-        properties: {
-          answers: { type: "object", additionalProperties: { type: "string" } },
-        },
+        properties: { answers: { type: "object", additionalProperties: { type: "string" } } },
         required: ["answers"],
+      },
+    },
+    {
+      name: "list_shortlist",
+      description:
+        "List opted-in candidates from the live RouteHire app (set ROUTEHIRE_API_URL). Includes resume_text; no phone/email.",
+      inputSchema: { type: "object", properties: {} },
+    },
+    {
+      name: "quote_hire_fee",
+      description: "Contingent fee for a job_id",
+      inputSchema: {
+        type: "object",
+        properties: { job_id: { type: "string" } },
+        required: ["job_id"],
       },
     },
   ],
@@ -53,21 +72,19 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
-  if (name === "search_jobs") {
-    const jobs = searchJobsLocal(args as Parameters<typeof searchJobsLocal>[0]);
-    return { content: [{ type: "text", text: JSON.stringify(jobs, null, 2) }] };
-  }
-  if (name === "get_job") {
-    const id = (args as { id: string }).id;
-    const job = getJobLocal(id);
-    return { content: [{ type: "text", text: JSON.stringify(job, null, 2) }] };
-  }
-  if (name === "get_trends") {
-    return { content: [{ type: "text", text: JSON.stringify(getTrendsLocal(), null, 2) }] };
-  }
+  const text = (data: unknown) => ({
+    content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
+  });
+
+  if (name === "search_jobs") return text(await searchJobs(args as Parameters<typeof searchJobs>[0]));
+  if (name === "get_job") return text(await getJob((args as { id: string }).id));
+  if (name === "get_trends") return text(await getTrendsTool());
   if (name === "match_profile") {
-    const answers = (args as { answers: Record<string, string> }).answers;
-    return { content: [{ type: "text", text: JSON.stringify(matchProfileLocal(answers), null, 2) }] };
+    return text(matchProfileLocal((args as { answers: Record<string, string> }).answers));
+  }
+  if (name === "list_shortlist") return text(await listShortlist());
+  if (name === "quote_hire_fee") {
+    return text(await quoteHireFee((args as { job_id: string }).job_id));
   }
   throw new Error(`Unknown tool: ${name}`);
 });

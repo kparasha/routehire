@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "routehire": {
+      "command": "npm",
+      "args": ["run", "start", "--workspace=@routehire/mcp"],
+      "cwd": ".",
+      "env": {
+        "ROUTEHIRE_API_URL": "http://127.0.0.1:3000"
+      }
+    }
+  }
+}

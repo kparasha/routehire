@@ -11,7 +11,10 @@
     "test:e2e": "playwright test",
     "dev": "npm run dev --workspace=@routehire/web",
     "build": "npm run build --workspace=@routehire/web",
-    "lint": "pnpm -r lint"
+    "ingest": "node worker/ingest/index.js",
+    "mcp": "npm run start --workspace=@routehire/mcp",
+    "mcp:smoke": "npm run smoke --workspace=@routehire/mcp",
+    "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

@@ -1,28 +1,15 @@
-# RouteHire build loop — PROGRESS
+# RouteHire — conversation map
 
-## 2026-03-21 (session start)
+## Shipped (demo)
+- API-first demand index (bonus, urgency, trending, home_daily, equipment)
+- Phone-first intake, resume builder, opt-in default
+- Lead-gen home (Uber Freight prefs + live seat count + single CTA)
+- Hiring desk + contingent fees + MCP package + `/hauler/mcp` tester
+- OpenSpec GST + UX research + aspirational backlog
+- Vitest + Playwright gates
 
-- **M1** OpenAPI + Zod core schemas — done
-- **M2** Seed demand (`data/jobs.seed.json`, 7 roles WM/Capital/Curb/recruiter) — done
-- **M3** Intake API + `buildResumeFromAnswers` + evals — done (13 vitest tests)
-- **M4** MCP package (`search_jobs`, `get_job`, `get_trends`, `match_profile`) — done
-- **M5** Playwright 3/3 — green (intake flaky once; global session store fix)
-- **M6** Deploy — pending (Vercel: set root `apps/web`)
+## Aspirational (named, not blocking demo)
+See `openspec/ASPIRATIONAL.md` — SMS, phone interview agent, live ATS, TrashLab embed.
 
-### CI gate
-
-```
-npm test     → 13 passed
-npm run build --workspace=@routehire/web → OK
-npm run test:e2e → 3 passed (1 flaky retry)
-```
-
-### Iteration 2
-
-- Fixed intake global session store + submit locking
-- Playwright uses `next start` (prod) — **3/3 stable**
-
-### Next
-
-- Push branch + Vercel deploy (root: `apps/web`)
-- Wire Supabase for multi-instance persistence
+## Demo for you
+Use `DEMO.md` — Press is **not** in nav (`/press` still exists if needed).

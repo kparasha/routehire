@@ -2,13 +2,13 @@
 
 ## Automated checks
 
-- Supabase RLS documented for production; MVP uses in-memory talent pool with server-only shortlist API
 - `POST /api/v1/jobs/refresh` requires `Authorization: Bearer $CRON_SECRET`
-- `npm audit` in CI (moderate+ review)
+- Anon RLS policies deny read on `candidates` / `intake_sessions` (see supabase migration)
+- `npm audit --audit-level=high` — known Next/postcss advisories; upgrade path is Next 16 (deferred)
 
 ## Checklist (post-MVP)
 
-- Rate limit `POST /intake/sessions` and candidate endpoints
-- OWASP ZAP baseline on preview deploy
+- Rate limit intake endpoints
+- OWASP ZAP baseline on preview
 - No service role keys in client bundle
-- PII consent via T&C + opt-in default with explicit uncheck
+- Live Supabase for multi-instance Vercel

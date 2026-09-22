@@ -18,8 +18,31 @@ export function normalizeSeedJob(raw: (typeof seedJobs)[number]): Job {
       role_family: raw.role_family as RoleFamily,
       hard_to_fill: raw.hard_to_fill,
     });
+  const text = `${raw.title} ${raw.description_snippet || ""}`.toLowerCase();
+  const schedule =
+    (raw as { schedule?: string }).schedule ||
+    (/otr|over.?the.?road/.test(text)
+      ? "otr"
+      : /regional/.test(text)
+        ? "regional"
+        : "home_daily");
+  const equipment =
+    (raw as { equipment?: string }).equipment ||
+    (/roll.?off/.test(text)
+      ? "roll_off"
+      : /residential/.test(text)
+        ? "residential"
+        : /front.?load/.test(text)
+          ? "front_load"
+          : /mechanic|shop|diesel/.test(text)
+            ? "shop"
+            : /dispatch|pm|product/.test(text)
+              ? "office"
+              : "other");
   return {
     ...raw,
+    schedule,
+    equipment,
     sign_on_bonus_usd: bonus,
     urgency_score,
   } as Job;
@@ -40,6 +63,8 @@ export type JobQuery = {
   q?: string;
   cdl_class?: string;
   role_family?: string;
+  schedule?: string;
+  equipment?: string;
   bonus_min?: number;
   urgency_min?: number;
   trending?: boolean;
@@ -60,6 +85,8 @@ export function queryJobs(query: JobQuery): Job[] {
   }
   if (query.cdl_class) list = list.filter((j) => j.cdl_class === query.cdl_class);
   if (query.role_family) list = list.filter((j) => j.role_family === query.role_family);
+  if (query.schedule) list = list.filter((j) => j.schedule === query.schedule);
+  if (query.equipment) list = list.filter((j) => j.equipment === query.equipment);
   if (query.bonus_min != null) {
     list = list.filter((j) => (j.sign_on_bonus_usd ?? 0) >= query.bonus_min!);
   }

@@ -2,12 +2,20 @@
   "name": "@routehire/mcp",
   "version": "0.1.0",
   "type": "module",
+  "description": "MCP connector for RouteHire hiring managers (jobs, shortlist, fees)",
   "bin": {
-    "routehire-mcp": "./dist/index.js"
+    "routehire-mcp": "./bin/routehire-mcp.mjs"
   },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "build": "tsc --noEmit",
+    "start": "node ./bin/routehire-mcp.mjs",
+    "test": "vitest run",
+    "smoke": "node ./scripts/smoke-bin.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
@@ -15,6 +23,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vitest": "^3.0.5"
   }

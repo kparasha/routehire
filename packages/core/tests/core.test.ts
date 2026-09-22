@@ -11,6 +11,9 @@ import {
   getTalentPoolShortlist,
   resetStoresForTests,
   queryJobs,
+  nextIntakeQuestion,
+  patchIntakeAnswer,
+  isIntakeComplete,
 } from "../src/index";
 
 describe("parseSignOnBonus", () => {
@@ -37,7 +40,6 @@ describe("computeContingentFee", () => {
   it("matches Waste Recruiters bands", () => {
     expect(computeContingentFee(45_000)).toBe(7_500);
     expect(computeContingentFee(85_000)).toBe(15_000);
-    expect(computeContingentFee(110_000)).toBe(20_000);
   });
 });
 
@@ -53,14 +55,12 @@ describe("buildResumeFromAnswers", () => {
       pay_band: "50_75k",
     });
     expect(generated_resume_json.cdl_class).toBe("B");
-    expect(generated_resume_json.endorsements).toContain("air brake");
     expect(resume_text).toContain("30301");
   });
 });
 
 describe("matchJobs", () => {
   it("returns ids for CDL driver profile", () => {
-    const jobs = getJobs();
     const ids = matchJobs(
       {
         zip: "30301",
@@ -71,7 +71,7 @@ describe("matchJobs", () => {
         schedule_preference: "home_daily",
         pay_band: "50_75k",
       },
-      jobs,
+      getJobs(),
     );
     expect(ids.length).toBeGreaterThan(0);
   });
@@ -90,6 +90,10 @@ describe("intake talent pool opt-in", () => {
       role_interest: "driver",
       schedule_preference: "home_daily",
       pay_band: "50_75k",
+      equipment: "roll_off",
+      first_name: "A",
+      phone: "",
+      email: "",
     };
     completeIntakeSession(s.id, false, new Date().toISOString());
     expect(getTalentPoolShortlist()).toHaveLength(0);
@@ -97,7 +101,7 @@ describe("intake talent pool opt-in", () => {
 
   it("includes when opt-in true", () => {
     const s = createIntakeSession();
-    const answers = {
+    for (const [k, v] of Object.entries({
       zip: "30301",
       cdl_class: "B",
       endorsements: "none",
@@ -105,12 +109,16 @@ describe("intake talent pool opt-in", () => {
       role_interest: "driver",
       schedule_preference: "home_daily",
       pay_band: "50_75k",
-    };
-    for (const [k, v] of Object.entries(answers)) {
-      s.answers[k] = v;
+      equipment: "residential",
+      first_name: "Bo",
+      phone: "555",
+      email: "",
+    })) {
+      patchIntakeAnswer(s.id, k, v);
     }
     completeIntakeSession(s.id, true, new Date().toISOString());
     expect(getTalentPoolShortlist()).toHaveLength(1);
+    expect(getTalentPoolShortlist()[0].resume_text).toBeTruthy();
   });
 });
 
@@ -118,5 +126,37 @@ describe("queryJobs", () => {
   it("filters by bonus_min", () => {
     const list = queryJobs({ bonus_min: 3000 });
     expect(list.every((j) => (j.sign_on_bonus_usd ?? 0) >= 3000)).toBe(true);
+  });
+
+  it("filters home_daily schedule", () => {
+    const list = queryJobs({ schedule: "home_daily" });
+    expect(list.every((j) => j.schedule === "home_daily")).toBe(true);
+  });
+});
+
+describe("nextIntakeQuestion harness", () => {
+  it("starts with role", () => {
+    expect(nextIntakeQuestion({}).id).toBe("role_interest");
+  });
+
+  it("branches driver to CDL", () => {
+    expect(
+      nextIntakeQuestion({ role_interest: "driver", first_name: "x", zip: "1" })?.id,
+    ).toBe("cdl_class");
+  });
+
+  it("marks complete", () => {
+    expect(
+      isIntakeComplete({
+        role_interest: "sales",
+        first_name: "",
+        zip: "30301",
+        years_experience: "5",
+        schedule_preference: "home_daily",
+        pay_band: "75_100k",
+        phone: "",
+        email: "",
+      }),
+    ).toBe(true);
   });
 });

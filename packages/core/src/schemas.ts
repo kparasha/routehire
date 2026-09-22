@@ -10,6 +10,20 @@ export const RoleFamily = z.enum([
 ]);
 export type RoleFamily = z.infer<typeof RoleFamily>;
 
+export const ScheduleType = z.enum(["home_daily", "regional", "otr"]);
+export type ScheduleType = z.infer<typeof ScheduleType>;
+
+export const EquipmentType = z.enum([
+  "roll_off",
+  "residential",
+  "front_load",
+  "commercial",
+  "shop",
+  "office",
+  "other",
+]);
+export type EquipmentType = z.infer<typeof EquipmentType>;
+
 export const JobSchema = z.object({
   id: z.string(),
   source_id: z.string(),
@@ -19,9 +33,12 @@ export const JobSchema = z.object({
   location: z.string(),
   role_family: RoleFamily,
   cdl_class: z.enum(["none", "A", "B"]).optional(),
+  schedule: ScheduleType.default("home_daily"),
+  equipment: EquipmentType.optional(),
   sign_on_bonus_usd: z.number().nullable(),
   salary_min: z.number().nullable(),
   salary_max: z.number().nullable(),
+  pay_display: z.string().optional(),
   urgency_score: z.number().min(0).max(100),
   trending: z.boolean(),
   days_open: z.number().int().nonnegative(),

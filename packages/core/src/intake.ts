@@ -2,20 +2,167 @@ import type { GeneratedResume } from "./schemas";
 import type { Job } from "./schemas";
 import { computeUrgencyScore } from "./urgency";
 
-export const INTAKE_QUESTIONS = [
-  { id: "first_name", prompt: "What should we call you? (first name)", optional: true },
-  { id: "zip", prompt: "What's your ZIP code?" },
+export type Question = {
+  id: string;
+  prompt: string;
+  optional?: boolean;
+  options?: readonly string[];
+  agent_line?: string;
+};
+
+/** Legacy flat list — tests / OpenAPI still accept these ids */
+export const INTAKE_QUESTIONS: Question[] = [
+  { id: "role_interest", prompt: "What seat are you after?", options: ["driver", "mechanic", "dispatch", "sales", "pm", "other"] },
+  { id: "first_name", prompt: "First name?", optional: true },
+  { id: "zip", prompt: "ZIP code?" },
   { id: "cdl_class", prompt: "CDL class?", options: ["none", "A", "B"] },
-  { id: "endorsements", prompt: "Endorsements? (comma-separated, or none)" },
-  { id: "years_experience", prompt: "Years in waste/trucking?" },
-  { id: "role_interest", prompt: "Role you're looking for?", options: ["driver", "mechanic", "dispatch", "sales", "pm", "other"] },
+  { id: "endorsements", prompt: "Endorsements? (or none)", optional: true },
+  { id: "years_experience", prompt: "Years experience?" },
   { id: "schedule_preference", prompt: "Schedule?", options: ["home_daily", "regional", "otr"] },
-  { id: "pay_band", prompt: "Target pay band?", options: ["under_50k", "50_75k", "75_100k", "100k_plus"] },
-  { id: "phone", prompt: "Mobile number (for job alerts)", optional: true },
-  { id: "email", prompt: "Email (optional)", optional: true },
-] as const;
+  { id: "equipment", prompt: "Equipment?", options: ["roll_off", "residential", "front_load", "any"] },
+  { id: "pay_band", prompt: "Pay target?", options: ["under_50k", "50_75k", "75_100k", "100k_plus"] },
+  { id: "phone", prompt: "Mobile (so haulers can call)?", optional: true },
+  { id: "email", prompt: "Email?", optional: true },
+];
 
 export type AnswerMap = Record<string, string>;
+
+const Q = {
+  role: {
+    id: "role_interest",
+    prompt: "Which job are you looking for?",
+    agent_line: "First — what kind of seat?",
+    options: ["driver", "mechanic", "dispatch", "sales", "pm", "other"],
+  },
+  name: {
+    id: "first_name",
+    prompt: "What should we call you?",
+    agent_line: "Got it. What’s your first name?",
+    optional: true,
+  },
+  zip: {
+    id: "zip",
+    prompt: "What’s your ZIP?",
+    agent_line: "Where should we look for local seats?",
+  },
+  cdl: {
+    id: "cdl_class",
+    prompt: "CDL class?",
+    agent_line: "Do you have a CDL — and which class?",
+    options: ["none", "B", "A"],
+  },
+  endorsements: {
+    id: "endorsements",
+    prompt: "Any endorsements? (air brake, tanker… or none)",
+    agent_line: "Endorsements help match roll-off and specialty routes.",
+    optional: true,
+  },
+  equipment: {
+    id: "equipment",
+    prompt: "Preferred truck / route?",
+    agent_line: "Roll-off, residential, or front-load?",
+    options: ["roll_off", "residential", "front_load", "any"],
+  },
+  years_driver: {
+    id: "years_experience",
+    prompt: "Years driving or on routes?",
+    agent_line: "How long have you been on the road or helping routes?",
+  },
+  years_shop: {
+    id: "years_experience",
+    prompt: "Years in diesel / fleet shop?",
+    agent_line: "How many years in the shop?",
+  },
+  years_ops: {
+    id: "years_experience",
+    prompt: "Years in dispatch / ops?",
+    agent_line: "How long in ops or dispatch?",
+  },
+  years_sales: {
+    id: "years_experience",
+    prompt: "Years in B2B / waste sales?",
+    agent_line: "Sales experience?",
+  },
+  years_generic: {
+    id: "years_experience",
+    prompt: "Years relevant experience?",
+    agent_line: "How many years in this kind of work?",
+  },
+  schedule: {
+    id: "schedule_preference",
+    prompt: "Schedule preference?",
+    agent_line: "Most hauler seats are home daily — that work for you?",
+    options: ["home_daily", "regional", "otr"],
+  },
+  pay: {
+    id: "pay_band",
+    prompt: "Target pay?",
+    agent_line: "What pay band are you aiming for?",
+    options: ["under_50k", "50_75k", "75_100k", "100k_plus"],
+  },
+  phone: {
+    id: "phone",
+    prompt: "Best mobile number?",
+    agent_line: "Haulers usually call — what’s the best number?",
+    optional: true,
+  },
+  email: {
+    id: "email",
+    prompt: "Email? (optional)",
+    agent_line: "Email if you want a copy of your profile.",
+    optional: true,
+  },
+} as const;
+
+function has(answers: AnswerMap, key: string) {
+  return Object.prototype.hasOwnProperty.call(answers, key);
+}
+
+/**
+ * Thin adaptive harness: ask role first, then only questions that matter for that seat.
+ */
+export function nextIntakeQuestion(answers: AnswerMap): Question | null {
+  if (!answers.role_interest) return { ...Q.role };
+  if (!has(answers, "first_name")) return { ...Q.name };
+  if (!answers.zip) return { ...Q.zip };
+
+  const role = answers.role_interest;
+
+  if (role === "driver") {
+    if (!answers.cdl_class) return { ...Q.cdl };
+    if (answers.cdl_class !== "none" && !has(answers, "endorsements")) {
+      return { ...Q.endorsements };
+    }
+    if (!answers.equipment) return { ...Q.equipment };
+    if (!answers.years_experience) return { ...Q.years_driver };
+  } else if (role === "mechanic") {
+    if (!answers.years_experience) return { ...Q.years_shop };
+    if (!has(answers, "cdl_class")) {
+      return {
+        id: "cdl_class",
+        prompt: "Any CDL? (shop roles often none)",
+        agent_line: "CDL optional for shop — what do you have?",
+        options: ["none", "B", "A"],
+      };
+    }
+  } else if (role === "dispatch") {
+    if (!answers.years_experience) return { ...Q.years_ops };
+  } else if (role === "sales") {
+    if (!answers.years_experience) return { ...Q.years_sales };
+  } else {
+    if (!answers.years_experience) return { ...Q.years_generic };
+  }
+
+  if (!answers.schedule_preference) return { ...Q.schedule };
+  if (!answers.pay_band) return { ...Q.pay };
+  if (!has(answers, "phone")) return { ...Q.phone };
+  if (!has(answers, "email")) return { ...Q.email };
+  return null;
+}
+
+export function isIntakeComplete(answers: AnswerMap): boolean {
+  return nextIntakeQuestion(answers) === null;
+}
 
 export function buildResumeFromAnswers(answers: AnswerMap): {
   generated_resume_json: GeneratedResume;
@@ -23,7 +170,7 @@ export function buildResumeFromAnswers(answers: AnswerMap): {
 } {
   const endorsementsRaw = answers.endorsements?.trim() || "none";
   const endorsements =
-    endorsementsRaw.toLowerCase() === "none"
+    !endorsementsRaw || endorsementsRaw.toLowerCase() === "none"
       ? []
       : endorsementsRaw.split(",").map((s) => s.trim()).filter(Boolean);
 
@@ -45,19 +192,20 @@ export function buildResumeFromAnswers(answers: AnswerMap): {
     email: answers.email || undefined,
   };
 
+  const equip = answers.equipment && answers.equipment !== "any" ? answers.equipment.replace(/_/g, "-") : null;
   const lines = [
     generated_resume_json.first_name
-      ? `${generated_resume_json.first_name} — Waste industry candidate`
-      : "Waste industry candidate",
-    `Location ZIP: ${generated_resume_json.zip}`,
-    `CDL: ${generated_resume_json.cdl_class === "none" ? "No CDL (open to training)" : `Class ${generated_resume_json.cdl_class}`}`,
-    `Endorsements: ${endorsements.length ? endorsements.join(", ") : "None listed"}`,
-    `Experience: ${years} year(s)`,
-    `Seeking: ${role} · ${schedule.replace("_", " ")}`,
+      ? `${generated_resume_json.first_name} — ${role}`
+      : `Waste industry · ${role}`,
+    `ZIP ${generated_resume_json.zip}`,
+    `CDL: ${generated_resume_json.cdl_class === "none" ? "None / open to training" : `Class ${generated_resume_json.cdl_class}`}`,
+    endorsements.length ? `Endorsements: ${endorsements.join(", ")}` : null,
+    equip ? `Equipment: ${equip}` : null,
+    `${years} year(s) · ${schedule.replace(/_/g, " ")}`,
     `Pay target: ${generated_resume_json.pay_band.replace(/_/g, " ")}`,
-  ];
-  if (generated_resume_json.phone) lines.push(`Contact: ${generated_resume_json.phone}`);
-  if (generated_resume_json.email) lines.push(`Email: ${generated_resume_json.email}`);
+    generated_resume_json.phone ? `Phone: ${generated_resume_json.phone}` : null,
+    generated_resume_json.email ? `Email: ${generated_resume_json.email}` : null,
+  ].filter(Boolean) as string[];
 
   return { generated_resume_json, resume_text: lines.join("\n") };
 }
@@ -65,15 +213,10 @@ export function buildResumeFromAnswers(answers: AnswerMap): {
 export function computeSkillGaps(resume: GeneratedResume, job: Job): string[] {
   const gaps: string[] = [];
   if (job.role_family === "driver" && resume.cdl_class === "none") {
-    gaps.push("CDL required — consider company-paid CDL training or helper→driver path");
+    gaps.push("CDL required — helper→driver or company-paid training");
   }
   if (job.cdl_class && job.cdl_class !== "none" && resume.cdl_class !== job.cdl_class) {
-    gaps.push(`Role expects CDL Class ${job.cdl_class}; you listed ${resume.cdl_class}`);
-  }
-  if (job.role_family === "driver" && !resume.endorsements.some((e) => /air.?brake|tanker|hazmat/i.test(e))) {
-    if (job.description_snippet?.match(/hazmat|tanker|air brake/i)) {
-      gaps.push("Job may require endorsements — verify air brake / hazmat / tanker");
-    }
+    gaps.push(`Seat wants CDL ${job.cdl_class}; you listed ${resume.cdl_class}`);
   }
   return gaps;
 }
@@ -86,14 +229,13 @@ export function matchJobs(resume: GeneratedResume, jobs: Job[], limit = 5): stri
       score += 20;
     }
     if (job.location.toLowerCase().includes(resume.zip.slice(0, 3))) score += 10;
-    score += computeUrgencyScore({
-      sign_on_bonus_usd: job.sign_on_bonus_usd,
-      days_open: job.days_open,
-      role_family: job.role_family,
-    }) / 10;
-    if (resume.schedule_preference === "home_daily" && /local|home/i.test(job.title + job.description_snippet)) {
-      score += 15;
-    }
+    score +=
+      computeUrgencyScore({
+        sign_on_bonus_usd: job.sign_on_bonus_usd,
+        days_open: job.days_open,
+        role_family: job.role_family,
+      }) / 10;
+    if (resume.schedule_preference === "home_daily" && job.schedule === "home_daily") score += 15;
     return { id: job.id, score };
   });
   return scored
@@ -106,15 +248,10 @@ export function matchJobs(resume: GeneratedResume, jobs: Job[], limit = 5): stri
 export function coachFromResume(resume: GeneratedResume, jobs: Job[]) {
   const matched_job_ids = matchJobs(resume, jobs);
   const matched = jobs.filter((j) => matched_job_ids.includes(j.id));
-  const skill_gaps = matched.flatMap((j) => computeSkillGaps(resume, j));
-  const uniqueGaps = [...new Set(skill_gaps)];
+  const skill_gaps = [...new Set(matched.flatMap((j) => computeSkillGaps(resume, j)))];
   const training: string[] = [];
   if (resume.cdl_class === "none" && resume.role_interest === "driver") {
-    training.push("Local CDL school or employer-paid training program");
-    training.push("Route helper role → internal driver promotion");
-  }
-  if (uniqueGaps.some((g) => /endorsement/i.test(g))) {
-    training.push("DMV endorsement prep (air brakes, tanker, hazmat as needed)");
+    training.push("Company-paid CDL or helper→driver path");
   }
   const { resume_text } = buildResumeFromAnswers({
     first_name: resume.first_name || "",
@@ -131,7 +268,7 @@ export function coachFromResume(resume: GeneratedResume, jobs: Job[]) {
   return {
     resume_text,
     generated_resume_json: resume,
-    skill_gaps: uniqueGaps,
+    skill_gaps,
     training,
     matched_job_ids,
   };

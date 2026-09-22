@@ -1,40 +1,32 @@
 # RouteHire
 
-Waste-industry hiring agent (TrashLab take-home): API-first demand index, phone-first intake (no resume required), outcome-based fees for haulers.
+Local waste hiring board — **home every night** CDL & ops seats for haulers. Drivers build a profile by phone (no resume). Haulers pay only when they hire.
 
 ## Quick start
 
 ```bash
 npm install
 npm test
-npm run dev --workspace=@routehire/web
+npm run build
+npm run start --workspace=@routehire/web -- -p 3000 -H 127.0.0.1
 ```
 
-Open http://localhost:3000
+Open http://127.0.0.1:3000
+
+## Surfaces
+
+| Path | Who |
+|------|-----|
+| `/` `/jobs` `/intake` | Drivers — local board + match |
+| `/hauler` | Haulers — shortlist + contingent fee |
+| `/press` | Press + demo script |
+| MCP `packages/mcp` | Agents / Cursor |
+
+## Specs
+
+See [openspec/GST.md](./openspec/GST.md)
 
 ## Scripts
 
-- `npm test` — Vitest (core, MCP, evals, API helpers)
-- `npm run test:e2e` — Playwright smokes
-- `npm run build --workspace=@routehire/web` — production build
-
-## MCP
-
-```bash
-npm run build --workspace=@routehire/mcp
-node packages/mcp/dist/index.js
-```
-
-Tools: `search_jobs`, `get_job`, `get_trends`, `match_profile`
-
-## Deploy
-
-- **Vercel:** root directory `apps/web`
-- **Railway:** `worker/ingest` cron (optional)
-
-## Docs
-
-- [openapi.yaml](./openapi.yaml)
-- [SECURITY.md](./SECURITY.md)
-- [TESTING.md](./TESTING.md)
-- [PROGRESS.md](./PROGRESS.md)
+- `npm test` / `npm run test:e2e`
+- `npm run ingest` — refresh seed + probe career sites
