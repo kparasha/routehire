@@ -3,50 +3,55 @@ export default function PressPage() {
     <main className="container press">
       <p className="hero-mark">Press · internal (not in nav)</p>
       <p className="eyebrow">For immediate release</p>
-      <h1>WasteHire places local waste talent — pay only on hire</h1>
+      <h1>Empty routes cost money. WasteHire fills them — you only pay when someone starts.</h1>
       <p className="lead">
-        Drivers get seats near home. Haulers get a free hiring desk and a Claude connector — and pay a flat
-        contingent fee only when someone starts.
+        Local waste jobs for drivers who want to be home every night. Ready talent for haulers who are tired of
+        paying recruiters before a hire lands.
       </p>
 
       <section>
-        <h2>The problem</h2>
+        <h2>The pain</h2>
         <p>
-          Independent haulers and regional operators lose revenue when CDL and ops seats sit empty. Generic career
-          sites bury “home every night” roll-off and residential roles under OTR freight noise. Niche recruiters win
-          on relationships and charge contingent fees — but haulers still lack a free desk to see who’s opted in
-          nearby, and drivers still face resume forms that don’t match how they actually apply (phone + chat).
+          <strong>For haulers:</strong> A vacant CDL or helper seat means missed pickups, angry customers, and
+          overtime that eats the margin. Posting on giant job boards mostly attracts OTR applicants who don’t want
+          residential or roll-off. Calling a specialty recruiter works — until the invoice shows up whether or not
+          the seat sticks.
+        </p>
+        <p>
+          <strong>For drivers:</strong> “Apply with resume” is a dead end on a phone. They want a local route, a real
+          bonus signal, and a human who calls them back — not another freight board that ships them overnight.
         </p>
       </section>
 
       <section>
-        <h2>The product</h2>
+        <h2>What WasteHire does</h2>
         <ul>
           <li>
-            <strong>Drivers (supply):</strong> ZIP + CDL prefs → ~2-minute chat intake (no resume upload) → profile
-            + talent-pool opt-in → matched to local demand.
+            <strong>Drivers chat for a few minutes</strong> — name, phone, ZIP, CDL — and land in a talent pool
+            haulers can actually see. No resume upload. Opt-in by default.
           </li>
           <li>
-            <strong>Haulers (demand):</strong> Live demand index (WM / Capital Waste / CurbWaste–style seats with
-            bonuses &amp; urgency) → shortlist of opted-in seekers → flat contingent fee only on hire (Waste
-            Recruiters–style bands) → Claude / MCP connector for the hiring desk.
+            <strong>Haulers see who’s nearby and what’s hard to fill</strong> — local seats with sign-on urgency,
+            plus a shortlist of people who already said yes to local waste work.
           </li>
           <li>
-            <strong>API → MCP → UI:</strong> Same job index and shortlist work in the browser or inside Claude as a
-            custom connector.
+            <strong>Pay only on hire.</strong> Flat contingent fees. Free desk until someone starts. Same idea as
+            outcome-based recruiting — without the black box.
           </li>
         </ul>
         <p>
-          Live:{" "}
+          Try it:{" "}
           <a href="https://web-flame-eta-28.vercel.app">web-flame-eta-28.vercel.app</a>
-          {" · "}
-          Connector name <code>WasteHire</code>
-          {" · "}
-          Remote MCP <code>https://web-flame-eta-28.vercel.app/api/mcp</code>
         </p>
-        <p>
-          Video script: repo <code>DEMO.md</code> (3 min demand / 2 min supply).
-        </p>
+      </section>
+
+      <section>
+        <h2>Why it wins</h2>
+        <ul>
+          <li>Waste-only — home-daily routes, not long-haul freight noise.</li>
+          <li>Drivers join for free; employers fund the network when a hire sticks.</li>
+          <li>Hiring desk works in the browser or from the tools owners already use day to day.</li>
+        </ul>
       </section>
 
       <section>
@@ -68,14 +73,6 @@ export default function PressPage() {
             viewed them — the corpus becomes a durable network.
           </li>
         </ol>
-      </section>
-
-      <section>
-        <h2>UX bet</h2>
-        <p>
-          Uber Freight interaction (prefs + live counts) + Lanefinder hiring model (one profile, no spam). See{" "}
-          <code>openspec/UX-RESEARCH.md</code>.
-        </p>
       </section>
     </main>
   );
